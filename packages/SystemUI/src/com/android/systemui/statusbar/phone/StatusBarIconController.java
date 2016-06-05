@@ -41,7 +41,6 @@ import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.NotificationColorUtil;
 import com.android.systemui.BatteryLevelTextView;
 import com.android.systemui.BatteryMeterView;
-import com.android.systemui.BatteryLevelTextView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.NotificationData;
@@ -81,7 +80,6 @@ public class StatusBarIconController implements Tunable {
     private ImageView mMoreIcon;
     private BatteryLevelTextView mBatteryLevelTextView;
     private BatteryMeterView mBatteryMeterView;
-    private BatteryLevelTextView mBatteryLevelTextView;
     private Clock mClock;
     // Left or center clock
     private LinearLayout mCenterClockLayout;
@@ -134,7 +132,6 @@ public class StatusBarIconController implements Tunable {
         mBatteryLevelTextView =
                 (BatteryLevelTextView) statusBar.findViewById(R.id.battery_level_text);
         mBatteryMeterView = (BatteryMeterView) statusBar.findViewById(R.id.battery);
-	mBatteryLevelTextView = (BatteryLevelTextView) statusBar.findViewById(R.id.battery_level_text);
         mClock = (Clock) statusBar.findViewById(R.id.clock);
         mCenterClock = (Clock) statusBar.findViewById(R.id.center_clock);
         mLeftClock = (Clock) statusBar.findViewById(R.id.left_clock);
@@ -443,7 +440,6 @@ public class StatusBarIconController implements Tunable {
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mIconTint));
         mBatteryLevelTextView.setTextColor(mIconTint);
         mBatteryMeterView.setDarkIntensity(mDarkIntensity);
-	mBatteryLevelTextView.setTextColor(mIconTint);
         mClock.setTextColor(mIconTint);
 	mCenterClock.setTextColor(mIconTint);
 	mLeftClock.setTextColor(mIconTint);
