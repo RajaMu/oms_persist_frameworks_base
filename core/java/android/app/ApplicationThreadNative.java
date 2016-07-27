@@ -161,9 +161,10 @@ public abstract class ApplicationThreadNative extends Binder
             boolean isForward = data.readInt() != 0;
             ProfilerInfo profilerInfo = data.readInt() != 0
                     ? ProfilerInfo.CREATOR.createFromParcel(data) : null;
+            ArrayList<String[]> assetPaths = data.readArrayList(null);
             scheduleLaunchActivity(intent, b, ident, info, curConfig, overrideConfig, compatInfo,
                     referrer, voiceInteractor, procState, state, persistentState, ri, pi,
-                    notResumed, isForward, profilerInfo);
+                    notResumed, isForward, profilerInfo, assetPaths);
             return true;
         }
 
@@ -180,7 +181,8 @@ public abstract class ApplicationThreadNative extends Binder
             if (data.readInt() != 0) {
                 overrideConfig = Configuration.CREATOR.createFromParcel(data);
             }
-            scheduleRelaunchActivity(b, ri, pi, configChanges, notResumed, config, overrideConfig);
+            ArrayList<String[]> assetPaths = data.readArrayList(null);
+            scheduleRelaunchActivity(b, ri, pi, configChanges, notResumed, config, overrideConfig, assetPaths);
             return true;
         }
 
@@ -804,7 +806,8 @@ class ApplicationThreadProxy implements IApplicationThread {
             CompatibilityInfo compatInfo, String referrer, IVoiceInteractor voiceInteractor,
             int procState, Bundle state, PersistableBundle persistentState,
             List<ResultInfo> pendingResults, List<ReferrerIntent> pendingNewIntents,
-            boolean notResumed, boolean isForward, ProfilerInfo profilerInfo) throws RemoteException {
+            boolean notResumed, boolean isForward, ProfilerInfo profilerInfo, 
+            List<String[]> assetPaths) throws RemoteException {
         Parcel data = Parcel.obtain();
         data.writeInterfaceToken(IApplicationThread.descriptor);
         intent.writeToParcel(data, 0);
@@ -834,6 +837,7 @@ class ApplicationThreadProxy implements IApplicationThread {
         } else {
             data.writeInt(0);
         }
+        data.writeList(assetPaths);
         mRemote.transact(SCHEDULE_LAUNCH_ACTIVITY_TRANSACTION, data, null,
                 IBinder.FLAG_ONEWAY);
         data.recycle();
@@ -842,7 +846,7 @@ class ApplicationThreadProxy implements IApplicationThread {
     public final void scheduleRelaunchActivity(IBinder token,
             List<ResultInfo> pendingResults, List<ReferrerIntent> pendingNewIntents,
             int configChanges, boolean notResumed, Configuration config,
-            Configuration overrideConfig) throws RemoteException {
+            Configuration overrideConfig, List<String[]> assetPaths) throws RemoteException {
         Parcel data = Parcel.obtain();
         data.writeInterfaceToken(IApplicationThread.descriptor);
         data.writeStrongBinder(token);
@@ -857,6 +861,7 @@ class ApplicationThreadProxy implements IApplicationThread {
         } else {
             data.writeInt(0);
         }
+        data.writeList(assetPaths);
         mRemote.transact(SCHEDULE_RELAUNCH_ACTIVITY_TRANSACTION, data, null,
                 IBinder.FLAG_ONEWAY);
         data.recycle();
