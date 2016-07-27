@@ -62,10 +62,12 @@ public interface IApplicationThread extends IInterface {
             CompatibilityInfo compatInfo, String referrer, IVoiceInteractor voiceInteractor,
             int procState, Bundle state, PersistableBundle persistentState,
             List<ResultInfo> pendingResults, List<ReferrerIntent> pendingNewIntents,
-            boolean notResumed, boolean isForward, ProfilerInfo profilerInfo) throws RemoteException;
+            boolean notResumed, boolean isForward, ProfilerInfo profilerInfo,
+            ArrayList<String[]> assetPaths) throws RemoteException;
     void scheduleRelaunchActivity(IBinder token, List<ResultInfo> pendingResults,
             List<ReferrerIntent> pendingNewIntents, int configChanges, boolean notResumed,
-            Configuration config, Configuration overrideConfig) throws RemoteException;
+            Configuration config, Configuration overrideConfig,
+            ArrayList<String[]> assetPaths) throws RemoteException;
     void scheduleNewIntent(List<ReferrerIntent> intent, IBinder token) throws RemoteException;
     void scheduleDestroyActivity(IBinder token, boolean finished,
             int configChanges) throws RemoteException;
