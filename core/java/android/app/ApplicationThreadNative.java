@@ -138,31 +138,17 @@ public abstract class ApplicationThreadNative extends Binder
         case SCHEDULE_LAUNCH_ACTIVITY_TRANSACTION:
         {
             data.enforceInterface(IApplicationThread.descriptor);
-            Intent intent = Intent.CREATOR.createFromParcel(data);
             IBinder b = data.readStrongBinder();
-            int ident = data.readInt();
-            ActivityInfo info = ActivityInfo.CREATOR.createFromParcel(data);
-            Configuration curConfig = Configuration.CREATOR.createFromParcel(data);
+            List<ResultInfo> ri = data.createTypedArrayList(ResultInfo.CREATOR);
+            List<ReferrerIntent> pi = data.createTypedArrayList(ReferrerIntent.CREATOR);
+            int configChanges = data.readInt();
+            boolean notResumed = data.readInt() != 0;
+            Configuration config = Configuration.CREATOR.createFromParcel(data);
             Configuration overrideConfig = null;
             if (data.readInt() != 0) {
                 overrideConfig = Configuration.CREATOR.createFromParcel(data);
             }
-            CompatibilityInfo compatInfo = CompatibilityInfo.CREATOR.createFromParcel(data);
-            String referrer = data.readString();
-            IVoiceInteractor voiceInteractor = IVoiceInteractor.Stub.asInterface(
-                    data.readStrongBinder());
-            int procState = data.readInt();
-            Bundle state = data.readBundle();
-            PersistableBundle persistentState = data.readPersistableBundle();
-            List<ResultInfo> ri = data.createTypedArrayList(ResultInfo.CREATOR);
-            List<ReferrerIntent> pi = data.createTypedArrayList(ReferrerIntent.CREATOR);
-            boolean notResumed = data.readInt() != 0;
-            boolean isForward = data.readInt() != 0;
-            ProfilerInfo profilerInfo = data.readInt() != 0
-                    ? ProfilerInfo.CREATOR.createFromParcel(data) : null;
-            scheduleLaunchActivity(intent, b, ident, info, curConfig, overrideConfig, compatInfo,
-                    referrer, voiceInteractor, procState, state, persistentState, ri, pi,
-                    notResumed, isForward, profilerInfo);
+            scheduleRelaunchActivity(b, ri, pi, configChanges, notResumed, config, overrideConfig);
             return true;
         }
 
