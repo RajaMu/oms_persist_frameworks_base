@@ -138,17 +138,33 @@ public abstract class ApplicationThreadNative extends Binder
         case SCHEDULE_LAUNCH_ACTIVITY_TRANSACTION:
         {
             data.enforceInterface(IApplicationThread.descriptor);
-            IBinder b = data.readStrongBinder();
-            List<ResultInfo> ri = data.createTypedArrayList(ResultInfo.CREATOR);
-            List<ReferrerIntent> pi = data.createTypedArrayList(ReferrerIntent.CREATOR);
-            int configChanges = data.readInt();
-            boolean notResumed = data.readInt() != 0;
+            String packageName = data.readString();
+            ApplicationInfo info =
+                ApplicationInfo.CREATOR.createFromParcel(data);
+            List<ProviderInfo> providers =
+                data.createTypedArrayList(ProviderInfo.CREATOR);
+            ComponentName testName = (data.readInt() != 0)
+                ? new ComponentName(data) : null;
+            ProfilerInfo profilerInfo = data.readInt() != 0
+                    ? ProfilerInfo.CREATOR.createFromParcel(data) : null;
+            Bundle testArgs = data.readBundle();
+            IBinder binder = data.readStrongBinder();
+            IInstrumentationWatcher testWatcher = IInstrumentationWatcher.Stub.asInterface(binder);
+            binder = data.readStrongBinder();
+            IUiAutomationConnection uiAutomationConnection =
+                    IUiAutomationConnection.Stub.asInterface(binder);
+            int testMode = data.readInt();
+            boolean openGlTrace = data.readInt() != 0;
+            boolean restrictedBackupMode = (data.readInt() != 0);
+            boolean persistent = (data.readInt() != 0);
             Configuration config = Configuration.CREATOR.createFromParcel(data);
-            Configuration overrideConfig = null;
-            if (data.readInt() != 0) {
-                overrideConfig = Configuration.CREATOR.createFromParcel(data);
-            }
-            scheduleRelaunchActivity(b, ri, pi, configChanges, notResumed, config, overrideConfig);
+            CompatibilityInfo compatInfo = CompatibilityInfo.CREATOR.createFromParcel(data);
+            HashMap<String, IBinder> services = data.readHashMap(null);
+            Bundle coreSettings = data.readBundle();
+            ArrayList<String[]> assetPaths = data.readArrayList(null);
+            bindApplication(packageName, info, providers, testName, profilerInfo, testArgs,
+                    testWatcher, uiAutomationConnection, testMode, openGlTrace,
+                    restrictedBackupMode, persistent, config, compatInfo, services, coreSettings, assetPaths);
             return true;
         }
 
